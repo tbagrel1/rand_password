@@ -1,2 +1,2 @@
-# rand_password
-Script permettant de générer des mots de passe aléatoires
+# randpasswd
+Allows creation of random strings with customizable length and charset.
