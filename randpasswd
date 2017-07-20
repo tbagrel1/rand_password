@@ -1,0 +1,64 @@
+#!/usr/bin/env python3
+
+import random
+import click
+
+"""Provide a simple way to generate passwords"""
+
+CHARSETS = [
+    "abcdefghijklmnopqrstuvwxyz",
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "0123456789",
+    "!\"#$%&'()*+'-./:;<=>?@[\\]^_`{|}~"
+]
+
+DEFAULT_LENGTH = 8
+DEFAULT_CHARSET = 0b1110
+
+class CharsetFlagParamType(click.ParamType):
+    name = "charset flag"
+    def convert(self, value, param, ctx):
+        value = str(value)
+        try:
+            if len(value) >= 2 and value[:2].lower() == "0b":
+                flag = int(value[2:], 2)
+            else:
+                flag = int(value)
+            assert flag > 0 and flag < 2 ** len(CHARSETS)
+            return flag
+        except ValueError:
+            self.fail("{} is not a valid charset flag".format(value))
+        except AssertionError:
+            self.fail("{} is not a flag in range 1-{}"
+                      .format(value, str(2 ** len(CHARSETS) - 1)))
+
+CHARSET_FLAG = CharsetFlagParamType()
+
+def dec_to_bin(dec, n):
+    l = []
+    while dec != 0:
+        l = [dec % 2] + l
+        dec //= 2
+    l = [0] * (n - len(l)) + l
+    return l
+
+@click.command()
+@click.option("--length", "-l", type=int, default=DEFAULT_LENGTH)
+@click.option("--charset", "-c", type=CHARSET_FLAG, default=DEFAULT_CHARSET)
+def main(length, charset):
+    """Generates a string or password.
+    Can be configured to have a specific length or to use a specific
+    charset."""
+    cset = ""
+    flags = dec_to_bin(charset, len(CHARSETS))
+    for i in range(len(CHARSETS)):
+        if flags[i]:
+            cset += CHARSETS[i]
+    c = ""
+    for i in range(length):
+        c += random.choice(cset)
+    print(c)
+
+if __name__ == "__main__":
+    main()
+
