@@ -9,7 +9,7 @@ CHARSETS = [
     "abcdefghijklmnopqrstuvwxyz",
     "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
     "0123456789",
-    "!\"#$%&'()*+'-./:;<=>?@[\\]^_`{|}~"
+    "!#%&()*+-./:;<=>?@[]^_{|}~"
 ]
 
 DEFAULT_LENGTH = 8
